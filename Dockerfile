@@ -1,4 +1,3 @@
-```dockerfile
 FROM python:3.12-slim
 
 WORKDIR /app
@@ -11,4 +10,3 @@ COPY index.html .
 
 CMD ["gunicorn", "-b", "0.0.0.0:10000", "app:app"]
 ```
-
