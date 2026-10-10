@@ -7,7 +7,7 @@ from flask import Flask, request, jsonify, send_from_directory
 app = Flask(__name__)
 
 API_KEY = os.environ.get("GEMINI_API_KEY")
-MODEL = "gemini-2.5-flash"
+MODEL = "gemini-3.8-flash"
 
 INSTRUCOES = """
 Seu nome é Duda. Você é uma inteligência artificial brasileira,
