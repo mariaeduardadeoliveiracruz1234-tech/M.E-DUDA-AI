@@ -1,0 +1,133 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>M.E Duda AI</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f3f0fa;
+      color: #29243a;
+    }
+    header {
+      background: #6d45b8;
+      color: white;
+      padding: 22px 16px;
+      text-align: center;
+    }
+    header h1 { margin: 0 0 6px; }
+    header p { margin: 0; }
+    main {
+      max-width: 700px;
+      margin: 20px auto;
+      padding: 0 12px;
+    }
+    #chat {
+      background: white;
+      border-radius: 14px;
+      padding: 16px;
+      min-height: 300px;
+      max-height: 55vh;
+      overflow-y: auto;
+      box-shadow: 0 3px 12px #00000012;
+    }
+    .msg {
+      padding: 11px 13px;
+      border-radius: 12px;
+      margin: 10px 0;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      line-height: 1.5;
+    }
+    .duda { background: #eee7fb; }
+    .user { background: #dff4e7; text-align: right; }
+    form { display: flex; gap: 8px; margin-top: 12px; }
+    input {
+      flex: 1;
+      min-width: 0;
+      padding: 14px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 12px 18px;
+      background: #6d45b8;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    button:disabled { opacity: .6; }
+    #status { color: #665b79; font-size: 14px; margin: 10px 2px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>✨ M.E Duda AI</h1>
+    <p>Sua assistente pessoal inteligente</p>
+  </header>
+  <main>
+    <div id="chat" aria-live="polite">
+      <div class="msg duda"><strong>Duda:</strong> Olá! 💜 Sou a Duda. Posso ajudar você a estudar Direito, escrever textos, organizar tarefas e muito mais. Como posso ajudar?</div>
+    </div>
+    <div id="status"></div>
+    <form id="form">
+      <input id="message" placeholder="Digite sua mensagem..." autocomplete="off" required>
+      <button id="send" type="submit">Enviar</button>
+    </form>
+  </main>
+  <script>
+    const form = document.getElementById("form");
+    const input = document.getElementById("message");
+    const chat = document.getElementById("chat");
+    const statusText = document.getElementById("status");
+    const send = document.getElementById("send");
+
+    function addMessage(who, text, className) {
+      const div = document.createElement("div");
+      div.className = "msg " + className;
+      const label = document.createElement("strong");
+      label.textContent = who + ": ";
+      div.appendChild(label);
+      div.appendChild(document.createTextNode(text));
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const message = input.value.trim();
+      if (!message) return;
+
+      addMessage("Você", message, "user");
+      input.value = "";
+      send.disabled = true;
+      statusText.textContent = "Duda está pensando...";
+
+      try {
+        const response = await fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Não consegui responder.");
+        addMessage("Duda", data.reply || "Não recebi uma resposta.", "duda");
+        statusText.textContent = "";
+      } catch (error) {
+        statusText.textContent = "Não consegui responder agora. Tente novamente em instantes.";
+      } finally {
+        send.disabled = false;
+        input.focus();
+      }
+    });
+  </script>
+</body>
+</html>
+```
